@@ -3,6 +3,7 @@ import 'dart:io';
 
 // 📦 Package imports:
 import 'package:args/args.dart';
+import 'package:import_sorter/pubspec_sort.dart' as pubspec_sort;
 import 'package:tint/tint.dart';
 import 'package:yaml/yaml.dart';
 
@@ -102,6 +103,14 @@ void main(List<String> args) {
     }
     dartFiles[filePath]?.writeAsStringSync(sortedFile.sortedFile);
     sortedFiles.add(filePath);
+  }
+
+  stdout.write('\n┏━━ Sorting pubspec.yaml dependencies...\n');
+  final pubspecSorted = pubspec_sort.sortPubspec();
+  if (pubspecSorted) {
+    stdout.write('┃  ┗━━ $success Sorted dependencies in pubspec.yaml\n');
+  } else {
+    stdout.write('┃  ┗━━ pubspec.yaml is already sorted or not found\n');
   }
 
   stopwatch.stop();
