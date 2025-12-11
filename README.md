@@ -112,6 +112,18 @@ import_sorter:
 
 If you need another example check the [example app's import_sorter configuration](https://github.com/fluttercommunity/import_sorter/blob/master/example/example_app/pubspec.yaml#L76).
 
+## Pubspec Dependency Sorting 📦
+
+The tool now automatically organizes your `pubspec.yaml` dependencies, ensuring cleaner and more readable project configurations.
+
+When running `import_sorter`, it will alphabetically sort package entries within the following sections, preserving comments and formatting:
+
+- `dependencies`
+- `dev_dependencies`
+- `dependency_overrides`
+
+This feature is enabled by default.
+
 ## 🚨 [`pre-commit`](https://pre-commit.com/) Hook
 
 There are two pre-commit hooks available: `dart-import-sorter` and `flutter-import-sorter`. They use `pub run` and `flutter pub run` respectively. Use the former for a generic Dart project and the latter for a Flutter project.
@@ -124,7 +136,7 @@ Using pre-commit hooks in your project:
 
 ```yaml
 - repo: https://github.com/fluttercommunity/import_sorter
-  rev: 'master'
+  rev: "master"
   hooks:
     - id: dart-import-sorter # use `flutter-import-sorter` for a Flutter project
 ```
@@ -140,8 +152,8 @@ pre-commit run --all-files
 All contributions are welcome! Just make sure that it's not an already existing issue or pull request.
 
 <!-- DO NOT REMOVE - contributor_list:start -->
-## 👥 Contributors
 
+## 👥 Contributors
 
 - **[@gleich](https://github.com/gleich)**
 
@@ -160,5 +172,6 @@ All contributions are welcome! Just make sure that it's not an already existing 
 - **[@jlnrrg](https://github.com/jlnrrg)**
 
 - **[@vHanda](https://github.com/vHanda)**
+- **[@vHanda](https://github.com/Franklyn-R-Silva)**
 
 <!-- DO NOT REMOVE - contributor_list:end -->

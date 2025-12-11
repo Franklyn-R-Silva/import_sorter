@@ -1,10 +1,9 @@
 // 🎯 Dart imports:
 import 'dart:io';
 
-/// Sort the imports
-/// Returns the sorted file as a string at
-/// index 0 and the number of sorted imports
-/// at index 1
+/// Sorts the imports in a given list of lines.
+/// Returns an [ImportSortData] object containing the sorted file
+/// as a string and a boolean indicating if the file was updated.
 ImportSortData sortImports(
   List<String> lines,
   String packageName,
@@ -13,6 +12,7 @@ ImportSortData sortImports(
   bool noComments, {
   String? filePath,
 }) {
+  // Functions to generate the categorized import comments
   String dartImportComment(bool emojis) =>
       '//${emojis ? ' 🎯 ' : ' '}Dart imports:';
   String flutterImportComment(bool emojis) =>
@@ -41,7 +41,7 @@ ImportSortData sortImports(
   var isMultiLineString = false;
 
   for (var i = 0; i < lines.length; i++) {
-    // Check if line is in multiline string
+    // Check if line is inside a multiline string literal
     if (_timesContained(lines[i], "'''") == 1 ||
         _timesContained(lines[i], '"""') == 1) {
       isMultiLineString = !isMultiLineString;
@@ -62,7 +62,9 @@ ImportSortData sortImports(
       } else {
         projectRelativeImports.add(lines[i]);
       }
-    } else if (i != lines.length - 1 &&
+    }
+    // Check for existing import comments that should be ignored
+    else if (i != lines.length - 1 &&
         (lines[i] == dartImportComment(false) ||
             lines[i] == flutterImportComment(false) ||
             lines[i] == packageImportComment(false) ||
@@ -74,16 +76,21 @@ ImportSortData sortImports(
             lines[i] == '// 📱 Flutter imports:') &&
         lines[i + 1].startsWith('import ') &&
         lines[i + 1].endsWith(';')) {
-    } else if (noImports()) {
+    }
+    // If no imports have been found yet, the line belongs to the file header
+    else if (noImports()) {
       beforeImportLines.add(lines[i]);
-    } else {
+    }
+    // Otherwise, the line belongs to the code after the imports
+    else {
       afterImportLines.add(lines[i]);
     }
   }
 
-  // If no imports return original string of lines
+  // If no imports were found, return the original string of lines
   if (noImports()) {
     var joinedLines = lines.join('\n');
+    // Ensure the file ends with a single newline character
     if (joinedLines.endsWith('\n') && !joinedLines.endsWith('\n\n')) {
       joinedLines += '\n';
     } else if (!joinedLines.endsWith('\n')) {
@@ -92,7 +99,7 @@ ImportSortData sortImports(
     return ImportSortData(joinedLines, false);
   }
 
-  // Remove spaces
+  // Remove trailing empty lines from the header
   if (beforeImportLines.isNotEmpty) {
     if (beforeImportLines.last.trim() == '') {
       beforeImportLines.removeLast();
@@ -101,21 +108,27 @@ ImportSortData sortImports(
 
   final sortedLines = <String>[...beforeImportLines];
 
-  // Adding content conditionally
+  // Add a blank line if the header is not empty
   if (beforeImportLines.isNotEmpty) {
     sortedLines.add('');
   }
+
+  // Adding Dart imports
   if (dartImports.isNotEmpty) {
     if (!noComments) sortedLines.add(dartImportComment(emojis));
     dartImports.sort();
     sortedLines.addAll(dartImports);
   }
+
+  // Adding Flutter imports
   if (flutterImports.isNotEmpty) {
     if (dartImports.isNotEmpty) sortedLines.add('');
     if (!noComments) sortedLines.add(flutterImportComment(emojis));
     flutterImports.sort();
     sortedLines.addAll(flutterImports);
   }
+
+  // Adding Package imports
   if (packageImports.isNotEmpty) {
     if (dartImports.isNotEmpty || flutterImports.isNotEmpty) {
       sortedLines.add('');
@@ -124,6 +137,8 @@ ImportSortData sortImports(
     packageImports.sort();
     sortedLines.addAll(packageImports);
   }
+
+  // Adding Project imports (relative and absolute paths)
   if (projectImports.isNotEmpty || projectRelativeImports.isNotEmpty) {
     if (dartImports.isNotEmpty ||
         flutterImports.isNotEmpty ||
@@ -137,22 +152,28 @@ ImportSortData sortImports(
     sortedLines.addAll(projectRelativeImports);
   }
 
+  // Add separation line before the rest of the code
   sortedLines.add('');
 
+  // Add the remaining code lines
   var addedCode = false;
   for (var j = 0; j < afterImportLines.length; j++) {
     if (afterImportLines[j] != '') {
       sortedLines.add(afterImportLines[j]);
       addedCode = true;
     }
+    // Only keep internal blank lines if code (non-blank line) has been added
     if (addedCode && afterImportLines[j] == '') {
       sortedLines.add(afterImportLines[j]);
     }
   }
+  // Add a final newline for standard file format compliance
   sortedLines.add('');
 
   final sortedFile = sortedLines.join('\n');
   final original = '${lines.join('\n')}\n';
+
+  // Check if the file changed and exit if required by the flag
   if (exitIfChanged && original != sortedFile) {
     if (filePath != null) {
       stdout
@@ -160,19 +181,21 @@ ImportSortData sortImports(
     }
     exit(1);
   }
+
+  // If no changes were made, return the original content
   if (original == sortedFile) {
     return ImportSortData(original, false);
   }
 
+  // Return the sorted content
   return ImportSortData(sortedFile, true);
 }
 
-/// Get the number of times a string contains another
-/// string
+/// Gets the number of times a string contains another string
 int _timesContained(String string, String looking) =>
     string.split(looking).length - 1;
 
-/// Data to return from a sort
+/// Data structure to return from a sort operation
 class ImportSortData {
   final String sortedFile;
   final bool updated;
