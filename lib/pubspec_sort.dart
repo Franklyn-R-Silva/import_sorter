@@ -10,8 +10,8 @@ import 'package:yaml_edit/yaml_edit.dart';
 ///
 /// Returns true if changes were made to the file, and false otherwise
 /// (if the file doesn't exist or is already sorted).
-bool sortPubspec() {
-  final file = File('pubspec.yaml');
+bool sortPubspec({String path = 'pubspec.yaml'}) {
+  final file = File(path);
 
   // 1. Check if the file exists.
   if (!file.existsSync()) {
