@@ -17,14 +17,14 @@ void main() {
     });
 
     tearDown(() {
-      // Limpa o arquivo de teste após cada execução
+      // Cleans up the test file after each execution
       if (testFile.existsSync()) {
         testFile.deleteSync();
       }
     });
 
     test('Sorts dependencies alphabetically', () {
-      // 1. Cria um arquivo yaml bagunçado
+      // 1. Create a messy yaml file
       const content = '''
 name: testing
 dependencies:
@@ -34,14 +34,14 @@ dependencies:
 ''';
       testFile.writeAsStringSync(content);
 
-      // 2. Roda sua função no arquivo de teste
+      // 2. Run your function on the test file
       final changed = sortPubspec(path: testFilePath);
 
-      // 3. Verifica se houve mudança e se está ordenado
+      // 3. Check if there was a change and if it is sorted
       expect(changed, isTrue);
 
       final sortedContent = testFile.readAsStringSync();
-      // args vem antes de tint, que vem antes de yaml
+      // args comes before tint, which comes before yaml
       expect(sortedContent, contains('args: ^2.0.0'));
       expect(sortedContent.indexOf('args:'),
           lessThan(sortedContent.indexOf('tint:')));
@@ -61,7 +61,7 @@ dev_dependencies:
       sortPubspec(path: testFilePath);
 
       final sortedContent = testFile.readAsStringSync();
-      // lints deve vir antes de test
+      // lints should come before test
       expect(sortedContent.indexOf('lints:'),
           lessThan(sortedContent.indexOf('test:')));
     });
@@ -75,10 +75,10 @@ dependencies:
 ''';
       testFile.writeAsStringSync(content);
 
-      // Roda a função
+      // Run the function
       final changed = sortPubspec(path: testFilePath);
 
-      // Não deve ter alterado nada
+      // Should not have changed anything
       expect(changed, isFalse);
     });
   });

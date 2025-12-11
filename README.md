@@ -172,6 +172,7 @@ All contributions are welcome! Just make sure that it's not an already existing 
 - **[@jlnrrg](https://github.com/jlnrrg)**
 
 - **[@vHanda](https://github.com/vHanda)**
-- **[@vHanda](https://github.com/Franklyn-R-Silva)**
+
+- **[@Franklyn-R-Silva](https://github.com/Franklyn-R-Silva)**
 
 <!-- DO NOT REMOVE - contributor_list:end -->
